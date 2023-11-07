@@ -21,13 +21,33 @@ class _LoginPageState extends State<LoginPage> {
     var apiUrl = "http://127.0.0.1:8000/api/user/login";
 
     final response = await http.post(Uri.parse(apiUrl), body: {
-      'username': username,
+      'email': username,
       'password': password,
     });
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
+    if (response.statusCode == 200) {
+      // Navigate to the Home Page on successful login
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    } else {
+      // Show an error message if login fails
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('Login Failed'),
+            content: Text('Invalid username or password. Please try again.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
